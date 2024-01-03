@@ -1,0 +1,50 @@
+name: py脚本
+
+on:
+  # push:
+  schedule:
+    - cron: 59 0-18,22-23 * * *
+  watch:
+    types: started
+  workflow_dispatch:
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检查分支
+        uses: actions/checkout@v3
+
+      - name: 安装 Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.4
+
+      - name: 安装模块
+        run: |
+          pip install --upgrade pip
+      - name: 生成clash文件
+        run: |  
+          export TZ='Asia/Shanghai'
+          python ./scripts/holiday_cn.py
+          echo "gitStatus<<EOF" >> $GITHUB_ENV
+          echo "$(git status)" >> $GITHUB_ENV
+          echo "111" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          # echo ${{ env.status }}
+      - name: 暂存提交
+        # 是否有文件状态发生变化，判断部分字符串"git add <file>..."
+        if: contains(env.gitStatus, 'git add <file>...')
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          export TZ='Asia/Shanghai'
+          git add .
+          git commit -m "update" -a
+      - name: 推送文件
+        # 是否有文件状态发生变化，判断部分字符串"git add <file>..."
+        if: contains(env.gitStatus, 'git add <file>...')
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}
