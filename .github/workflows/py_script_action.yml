@@ -27,7 +27,7 @@ jobs:
       - name: 生成clash文件
         run: |  
           export TZ='Asia/Shanghai'
-          python ./scripts/holiday_cn.py
+          python ./holiday_cn.py
           echo "gitStatus<<EOF" >> $GITHUB_ENV
           echo "$(git status)" >> $GITHUB_ENV
           echo "111" >> $GITHUB_ENV
