@@ -6,8 +6,7 @@ if __name__ == "__main__":
     if not os.path.exists("today"):
         os.mkdir("today")
     # 今天日期写入文件
-    shanghaiTz = pytz.timezone("Asia/Shanghai")
-    timeNow = datetime.now(shanghaiTz)
+    timeNow = datetime.now()
     print("timeNow=" + str(timeNow))
     fp = open("today/time.txt", "w+", encoding='utf-8')     
     fp.write(str(timeNow))
